@@ -68,23 +68,6 @@ class HttpServiceCaller:
         res: HttpServiceResponse = self._do_call(request, session)
         return res
 
-    def call_api(self, request: HttpServiceRequest) -> HttpServiceResponse:
-        """Calls a GCP API available at the request `url` with an HTTP request.
-
-        The request is authenticated using OAuth2 token.
-
-        Args:
-            request: The request to be sent.
-        Returns:
-            The HTTP response.
-        Raises:
-            HttpCallFailed: When the HTTP call to the API has failed.
-            MaxHttpRetryError: When HTTP call has gotten too many repeatable failing responses.
-        """
-        session: AuthorizedSession = self._api_auth_session()
-        res: HttpServiceResponse = self._do_call(request, session)
-        return res
-
     def _do_call(
         self,
         request: HttpServiceRequest,
@@ -103,7 +86,9 @@ class HttpServiceCaller:
             headers=headers,
         )
         return HttpServiceResponse(
-            body=response.content, headers=response.headers, status_code=response.status_code
+            body=response.content,
+            headers=dict(response.headers),
+            status_code=response.status_code,
         )
 
     def _prepare_request_content(self, request: HttpServiceRequest) -> str | bytes | dict:
@@ -122,16 +107,6 @@ class HttpServiceCaller:
             case _:
                 data = request.body
         return data
-
-    def _api_auth_session(self) -> AuthorizedSession:
-        credentials: Credentials = self._sa_credentials()
-        return AuthorizedSession(credentials)
-
-    def _sa_credentials(self) -> Credentials:
-        return service_account.Credentials.from_service_account_info(
-            info=self._service_invoker_credentials,
-            scopes=["https://www.googleapis.com/auth/cloud-platform"],
-        )
 
     def _service_auth_session(self, target_service: str) -> AuthorizedSession:
         credentials: Credentials = self._sa_token_credentials(target_service)
