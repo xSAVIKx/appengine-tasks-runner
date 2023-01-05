@@ -22,4 +22,5 @@ repos:
         types: [ python ]
         args: [ ]
         additional_dependencies:
-          - 'pydantic'
+          - "pydantic"
+          - "types-requests"
