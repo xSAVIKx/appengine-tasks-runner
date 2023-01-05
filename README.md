@@ -44,3 +44,11 @@ callback before returning HTTP response to the `tasksRunner`.
 [appengine]: https://cloud.google.com/appengine
 
 [cloud-tasks]: https://cloud.google.com/tasks
+
+# Infrastructure and setup
+
+The full setup of the required infrastructure is performed with a helper script
+[`setup-env.sh`](./setup-env.sh). The script enables required services, creates App Engine
+application, service account, queue and secrets.
+
+After the setup is done one may deploy the service using [`deploy.sh`](./deploy.sh) script.
