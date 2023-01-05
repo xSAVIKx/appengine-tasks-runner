@@ -9,6 +9,7 @@ HTTP connection.
 
 - [Python 3.10](https://www.python.org/downloads/release/python-3109/)
 - [`gcloud` CLI](https://cloud.google.com/sdk/docs/install)
+- [poetry](https://python-poetry.org/docs/1.2/#installation)
 
 # Architecture
 
