@@ -20,3 +20,9 @@ async def handle_task(http_service_request: HttpServiceRequest) -> HttpServiceRe
     """
     response: HttpServiceResponse = service_caller.call_service(request=http_service_request)
     return response
+
+
+@app.get("/_ah/warmup")
+async def warmup():
+    """Handles AppEngine warmup requests."""
+    return {"status": "OK"}
