@@ -1,14 +1,42 @@
 import json
 import os
+from functools import cache
 from typing import Final
 
 import pydantic
 import requests
 from google.auth.credentials import Credentials
 from google.auth.transport.requests import AuthorizedSession
+from google.cloud.secretmanager_v1 import (
+    AccessSecretVersionRequest,
+    AccessSecretVersionResponse,
+    SecretManagerServiceClient,
+    SecretPayload,
+)
 from google.oauth2 import service_account
 
 from appengine_tasks_runner import HttpServiceRequest, HttpServiceResponse
+
+
+@cache
+def _load_secret(secret_name: str) -> str:
+    """Loads content of the GCP secret by its name."""
+
+    gcp_project: str | None = os.getenv("GOOGLE_CLOUD_PROJECT")
+    if not gcp_project:
+        raise RuntimeError(
+            "GCP project is not configured in `GOOGLE_CLOUD_PROJECT` env variable."
+        )
+    secret_path: str = f"projects/{gcp_project}/secrets/{secret_name}/versions/latest"
+    request: AccessSecretVersionRequest = AccessSecretVersionRequest()
+    request.name = secret_path
+    secret_manager: SecretManagerServiceClient = SecretManagerServiceClient()
+    secret_version: AccessSecretVersionResponse = secret_manager.access_secret_version(
+        request=request
+    )
+    secret_payload: SecretPayload = secret_version.payload
+    secret_data: bytes = secret_payload.data
+    return secret_data.decode("utf-8")
 
 
 class HttpServiceCaller:
@@ -20,6 +48,9 @@ class HttpServiceCaller:
 
     The secret is expected to be a JSON string with the service account private key info.
     """
+
+    SERVICE_CALLER_SECRET_NAME_ENV: Final[str] = "SERVICE_CALLER_SECRET_NAME"
+    """The name of the environment variable which holds the name of the Service Caller secret."""
 
     def __init__(
         self,
@@ -35,21 +66,26 @@ class HttpServiceCaller:
             RuntimeError: if no credentials were provided or the credentials secret name
                 is not configured.
         """
-        self._service_invoker_credentials: dict = self._prepare_credentials(
-            service_caller_credentials
+        self._service_caller_credentials: dict = self._prepare_credentials(
+            service_caller_credentials=service_caller_credentials
         )
 
-    def _prepare_credentials(self, service_invoker_credentials: dict | None = None) -> dict:
-        if service_invoker_credentials:
-            return service_invoker_credentials
-        service_invoker_credentials_json = os.getenv(HttpServiceCaller.SERVICE_CALLER_SECRET_ENV)
-        if service_invoker_credentials_json:
-            res: dict = json.loads(service_invoker_credentials_json)
-            return res
-        raise RuntimeError(
-            "Service caller credentials are not configured. Please set the "
-            f"`{HttpServiceCaller.SERVICE_CALLER_SECRET_ENV}` environment variable."
-        )
+    def _prepare_credentials(self, service_caller_credentials: dict | None = None) -> dict:
+        if service_caller_credentials:
+            return service_caller_credentials
+        service_caller_credentials_json = os.getenv(HttpServiceCaller.SERVICE_CALLER_SECRET_ENV)
+        if service_caller_credentials_json:
+            return dict(json.loads(service_caller_credentials_json))
+        secret_name = os.getenv(HttpServiceCaller.SERVICE_CALLER_SECRET_NAME_ENV)
+        if not secret_name:
+            raise RuntimeError(
+                "Service caller credentials are not configured. Please set the "
+                f"`{HttpServiceCaller.SERVICE_CALLER_SECRET_ENV}` or "
+                f"`{HttpServiceCaller.SERVICE_CALLER_SECRET_NAME_ENV}` environment variables "
+                "with either the credentials or the name of the secret which holds the credentials."
+            )
+        service_caller_credentials_json_secret: str = _load_secret(secret_name=secret_name)
+        return dict(json.loads(service_caller_credentials_json_secret))
 
     def call_service(self, request: HttpServiceRequest) -> HttpServiceResponse:
         """Calls a GCP service available at the request `url` with an HTTP request.
@@ -114,5 +150,5 @@ class HttpServiceCaller:
 
     def _sa_token_credentials(self, target_service: str) -> Credentials:
         return service_account.IDTokenCredentials.from_service_account_info(
-            self._service_invoker_credentials, target_audience=target_service
+            self._service_caller_credentials, target_audience=target_service
         )

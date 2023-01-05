@@ -8,4 +8,4 @@ basic_scaling:
 inbound_services:
   - warmup
 env_variables:
-  SERVICE_CALLER_SECRET: "stub"
+  SERVICE_CALLER_SECRET_NAME: "service-caller-sa-key"
