@@ -53,3 +53,30 @@ The full setup of the required infrastructure is performed with a helper script
 application, service account, queue and secrets.
 
 After the setup is done one may deploy the service using [`deploy.sh`](./deploy.sh) script.
+
+# Things to improve
+
+Just a couple of things one may want to improve into this service.
+
+1. Add retry policy with some jitter.
+
+   Right now the service will just fail and/or rely on the Cloud Tasks retry policy which may
+   not be always a desired behavior. Ideally one should be able to provide customized retry policy
+   as part of the request payload and disable Cloud Tasks retries while they are not that universal.
+
+2. Add some well-structured logging.
+
+   No logging support is implemented in the service which may make debugging and diagnostics
+   somewhat hard. Ideally one should implement structured logging e.g. using Cloud Logging
+   capabilities.
+
+3. Add some tracing support.
+
+   Tracing async executions across multiple services and environments is not the easiest task so
+   it's a good idea to have some tracing support available in the service.
+
+4. Have support of callbacks as part of this service.
+
+   It is expected that one will want to get a result of the async call in one or another way.
+   The service should provide some capabilities out of the box for doing some simple callbacks
+   or have an endpoint that may allow checking up on the status of the execution.
