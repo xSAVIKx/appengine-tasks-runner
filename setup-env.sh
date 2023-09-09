@@ -5,7 +5,7 @@
 # services and environments.
 ##################################################################################################
 
-GCP_PROJECT="${GCP_PROJECT}"
+GCP_PROJECT="${GOOGLE_CLOUD_PROJECT}"
 GCP_REGION="${GCP_REGION:us-central}"
 
 
