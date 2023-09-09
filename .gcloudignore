@@ -23,7 +23,7 @@ ipython_config.py
 [Ll]ocal
 [Ss]cripts
 pyvenv.cfg
-.venv
+.venv/
 pip-selfcheck.json
 
 ### Python template
@@ -329,3 +329,4 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+infa/
