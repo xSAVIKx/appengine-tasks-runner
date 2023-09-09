@@ -1,5 +1,5 @@
 service: "tasks-runner"
-runtime: python310
+runtime: python311
 entrypoint: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
 instance_class: B2
 basic_scaling:

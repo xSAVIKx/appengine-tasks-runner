@@ -7,9 +7,9 @@ HTTP connection.
 
 # Prerequisites
 
-- [Python 3.10](https://www.python.org/downloads/release/python-3109/)
+- [Python 3.11](https://www.python.org/downloads/release/python-3115/)
 - [`gcloud` CLI](https://cloud.google.com/sdk/docs/install)
-- [poetry](https://python-poetry.org/docs/1.2/#installation)
+- [poetry](https://python-poetry.org/docs/1.5/#installation)
 
 # Architecture
 

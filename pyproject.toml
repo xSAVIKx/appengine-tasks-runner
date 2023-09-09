@@ -7,21 +7,21 @@ readme = "README.md"
 packages = [{ include = "appengine_tasks_runner" }]
 
 [tool.poetry.dependencies]
-python = "3.10.*"
-fastapi = "0.88.0"
-uvicorn = { version = "0.20.0", extras = ["standard"] }
-pydantic = "1.10.4"
-requests = "2.28.1"
-google-auth = "2.15.0"
-google-cloud-secret-manager = "2.14.0"
+python = "3.11.*"
+fastapi = "0.103.1"
+uvicorn = { version = "0.23.2", extras = ["standard"] }
+pydantic = "1.10.12"
+requests = "2.31.0"
+google-auth = "2.22.0"
+google-cloud-secret-manager = "2.16.3"
 
 [tool.poetry.dev-dependencies]
-pre-commit = "2.21.0"
-pytest = "7.2.0"
-coverage = "7.0.3"
-pytest-cov = "4.0.0"
+pre-commit = "3.4.0"
+pytest = "7.4.2"
+coverage = "7.3.1"
+pytest-cov = "4.1.0"
 pytest-unordered = "0.5.2"
-types-requests = "2.28.11.7"
+types-requests = "2.31.0.2"
 
 [build-system]
 requires = ["poetry-core"]
