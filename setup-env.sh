@@ -70,6 +70,14 @@ gcloud secrets create "service-caller-sa-key" \
   --labels="service=appengine-tasks-runner" \
   --project="${GCP_PROJECT}"
 
+echo "Adding IAM permission to AppEngine SA for reading the secret."
+
+APPENGINE_SA_EMAIL="${GCP_PROJECT}@appspot.gserviceaccount.com"
+gcloud projects add-iam-policy-binding ${GCP_PROJECT} \
+  --member="serviceAccount:${APPENGINE_SA_EMAIL}" \
+  --role="roles/secretmanager.secretAccessor" \
+  --condition=None
+
 
 echo "Creating scheduled tasks queue"
 gcloud tasks queues create "scheduled-tasks" \
