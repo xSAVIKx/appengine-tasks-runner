@@ -6,10 +6,11 @@
 ##################################################################################################
 
 GCP_PROJECT="${GOOGLE_CLOUD_PROJECT}"
-GCP_REGION="${GCP_REGION:-us-central}"
+APPENGINE_GCP_REGION="${APPENGINE_GCP_REGION:-us-central}"
+TASKS_GCP_REGION="${TASKS_GCP_REGION:-us-central1}"
 
 
-echo "Running script for project ${GCP_PROJECT} and region ${GCP_REGION}"
+echo "Running script for project ${GCP_PROJECT} and AppEngine region ${APPENGINE_GCP_REGION} and Cloud Tasks region ${TASKS_GCP_REGION}"
 
 echo "Enabling required GCP services"
 # Enable all required GCP services
@@ -29,7 +30,7 @@ gcloud services enable iam.googleapis.com --project="${GCP_PROJECT}"
 # Create App Engine application
 echo "Creating AppEngine application"
 gcloud app create \
-  --region="${GCP_REGION}" \
+  --region="${APPENGINE_GCP_REGION}" \
   --project="${GCP_PROJECT}"
 
 
@@ -72,7 +73,7 @@ gcloud secrets create "service-caller-sa-key" \
 
 echo "Creating scheduled tasks queue"
 gcloud tasks queues create "scheduled-tasks" \
-  --location="${GCP_REGION}" \
+  --location="${TASKS_GCP_REGION}" \
   --max-attempts=3 \
   --max-backoff="10s" \
   --max-dispatches-per-second=1 \
