@@ -15,7 +15,8 @@ from google.cloud.secretmanager_v1 import (
 )
 from google.oauth2 import service_account
 
-from appengine_tasks_runner import HttpServiceRequest, HttpServiceResponse
+from appengine_tasks_runner.http_service_request import HttpServiceRequest
+from appengine_tasks_runner.http_service_response import HttpServiceResponse
 
 
 @cache
