@@ -6,7 +6,7 @@
 ##################################################################################################
 
 GCP_PROJECT="${GOOGLE_CLOUD_PROJECT}"
-GCP_REGION="${GCP_REGION:us-central}"
+GCP_REGION="${GCP_REGION:-us-central}"
 
 
 echo "Running script for project ${GCP_PROJECT} and region ${GCP_REGION}"
